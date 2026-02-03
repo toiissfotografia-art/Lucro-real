@@ -327,17 +327,35 @@ function gerenciarSeguranca() {
 }
 
 function validarChave() {
-    const id = localStorage.getItem('app_user_unique_id');
+    // 1. Pegamos o ID que está aparecendo na tela agora (o mesmo que ele te mandou)
+    const idAparelho = document.getElementById('meuID').innerText;
+    
+    // 2. Pegamos a chave que ele digitou
     const chaveDigitada = document.getElementById('inputChave').value;
+    
+    // 3. Pegamos a data atual para o cálculo mensal
     const data = new Date();
-    const calculoValido = (parseInt(id) * 3) + SEGREDO_SOMA + (data.getMonth() + 1) + data.getFullYear();
+    const mes = data.getMonth() + 1;
+    const ano = data.getFullYear();
+    
+    // 4. IMPORTANTE: Verifique se no seu index.html a variável SEGREDO_SOMA é 888
+    const SEGREDO_SOMA = 888; 
 
+    // 5. Fazemos o cálculo exatamente igual ao do gerador
+    const calculoValido = (parseInt(idAparelho) * 3) + SEGREDO_SOMA + mes + ano;
+
+    // 6. Comparação
     if (parseInt(chaveDigitada) === calculoValido) {
+        // Salva a chave e o mês da ativação para não bloquear no dia seguinte
         localStorage.setItem('chave_sucesso_ativada', chaveDigitada);
-        alert("Acesso mensal liberado! Boas corridas.");
-        location.reload();
+        localStorage.setItem('mes_ativacao', mes); 
+        
+        alert("✅ Acesso mensal liberado! Boas corridas.");
+        
+        // Esconde o bloqueio imediatamente
+        document.getElementById('bloqueioSeguranca').style.display = 'none';
     } else {
-        alert("Chave inválida ou vencida. Verifique o mês atual.");
+        alert("❌ Chave inválida ou vencida. Verifique o mês atual.");
     }
 }
 
