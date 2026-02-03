@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gerador de Chaves Pro - ADMIN</title>
+    <title>Painel Administrativo - Lucro Real</title>
     <style>
         body { 
             font-family: 'Segoe UI', sans-serif; 
@@ -14,7 +14,7 @@
             align-items: center; 
             min-height: 100vh; 
             margin: 0; 
-            padding: 15px; /* Espaço nas bordas em telas pequenas */
+            padding: 15px;
             box-sizing: border-box;
         }
         .card { 
@@ -23,13 +23,11 @@
             padding: 25px; 
             border-radius: 15px; 
             width: 100%; 
-            max-width: 400px; /* Não deixa ficar gigante no PC */
+            max-width: 400px; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
         }
         h2 { color: #2563eb; margin-top: 0; margin-bottom: 20px; text-align: center; font-size: 1.5rem; }
         label { font-size: 0.85rem; font-weight: bold; color: #64748b; }
-        
-        /* Ajuste dos inputs para facilitar o toque no celular */
         input { 
             width: 100%; 
             padding: 15px; 
@@ -38,9 +36,7 @@
             border-radius: 10px; 
             font-size: 1rem; 
             box-sizing: border-box; 
-            -webkit-appearance: none; /* Remove sombras estranhas no iOS */
         }
-        
         .resultado-box { 
             background: #f1f5f9; 
             padding: 20px; 
@@ -51,8 +47,6 @@
             display: none; 
         }
         .chave { font-size: 2.5rem; font-weight: bold; color: #2563eb; display: block; letter-spacing: 3px; }
-        
-        /* Botões maiores para o polegar */
         button, .btn-whatsapp { 
             width: 100%; 
             padding: 18px; 
@@ -66,16 +60,11 @@
             display: block;
             text-decoration: none;
             box-sizing: border-box;
+            text-align: center;
         }
         .btn-gerar { background: #2563eb; color: white; }
-        .btn-whatsapp { 
-            background: #22c55e; 
-            color: white; 
-            display: none; 
-            line-height: 1.2; 
-        }
-        button:active { transform: scale(0.98); } /* Efeito de clique */
-        
+        .btn-whatsapp { background: #22c55e; color: white; display: none; }
+        button:active { transform: scale(0.98); }
         .info-data { font-size: 0.85rem; color: #2563eb; margin-bottom: 20px; text-align: center; font-weight: bold; background: #e0e7ff; padding: 8px; border-radius: 8px; }
     </style>
 </head>
@@ -83,10 +72,9 @@
 
 <div class="card">
     <h2>Gerador Mensal</h2>
+    <div id="dataInfo" class="info-data">Carregando mês...</div>
     
-    <div id="dataInfo" class="info-data">Gerando para: --/--</div>
-    
-    <label>WhatsApp do Motorista (DDD + Número)</label>
+    <label>WhatsApp do Motorista</label>
     <input type="number" id="telMotorista" placeholder="Ex: 11962356998" inputmode="tel">
 
     <label>ID do Aparelho (4 dígitos)</label>
@@ -99,15 +87,13 @@
         <span class="chave" id="chaveTexto">0000</span>
     </div>
 
-    <a id="btnZap" class="btn-whatsapp" href="#" onclick="enviarWhatsapp()">
-        ENVIAR PARA O MOTORISTA
-    </a>
+    <a id="btnZap" class="btn-whatsapp" href="#" target="_blank">ENVIAR PARA O MOTORISTA</a>
 </div>
 
 <script>
     const SENHA_MESTRE = "Acesso@13"; 
+    const SEGREDO_SOMA = 888; 
 
-    // Verificação de senha adaptada para não bugar no carregamento mobile
     window.onload = function() {
         let acesso = prompt("Digite a senha de administrador:");
         if (acesso !== SENHA_MESTRE) {
@@ -115,19 +101,16 @@
             document.body.innerHTML = "<h1 style='color:white; text-align:center; margin-top:50px;'>Acesso Restrito</h1>";
             return;
         }
-
         const d = new Date();
-        document.getElementById('dataInfo').innerText = `Gerando para o mês: ${d.getMonth() + 1}/${d.getFullYear()}`;
+        document.getElementById('dataInfo').innerText = `Gerando para: ${d.getMonth() + 1}/${d.getFullYear()}`;
     };
-
-    const SEGREDO_SOMA = 777; 
 
     function gerarChave() {
         const id = document.getElementById('idCliente').value;
         const tel = document.getElementById('telMotorista').value;
 
         if (!id || !tel) {
-            alert("Preencha o telefone e o ID!");
+            alert("Preencha todos os campos!");
             return;
         }
 
@@ -135,28 +118,20 @@
         const mes = data.getMonth() + 1;
         const ano = data.getFullYear();
 
-        const chaveFinal = (parseInt(id) * 3) + SEGREDO_SOMA + mes + ano;
+        // Fórmula sincronizada com o App
+        const chaveFinal = (Math.floor(id) * 3) + SEGREDO_SOMA + mes + ano;
 
         document.getElementById('chaveTexto').innerText = chaveFinal;
         document.getElementById('resultado').style.display = 'block';
-        document.getElementById('btnZap').style.display = 'block';
         
-        // Faz o scroll automático para o botão de envio no celular
+        // Configura o link do WhatsApp
+        const btnZap = document.getElementById('btnZap');
+        const mensagem = `✅ *PAGAMENTO CONFIRMADO!*\n\nAqui está sua chave de acesso para o mês *${mes}/${ano}*:\n\n🔑 Chave: *${chaveFinal}*\n\nBasta colar no seu App para liberar as funções. Boas corridas! 🚗💨`;
+        btnZap.href = `https://wa.me/55${tel}?text=${encodeURIComponent(mensagem)}`;
+        btnZap.style.display = 'block';
+        
         window.scrollTo(0, document.body.scrollHeight);
     }
-
-    function enviarWhatsapp() {
-        const tel = document.getElementById('telMotorista').value;
-        const chave = document.getElementById('chaveTexto').innerText;
-        const d = new Date();
-
-        const mensagem = `✅ *PAGAMENTO CONFIRMADO!*\n\nAqui está sua chave de acesso para o mês *${d.getMonth()+1}/${d.getFullYear()}*:\n\n🔑 Chave: *${chave}*\n\nBasta colar no seu App para liberar as funções. Boas corridas! 🚗💨`;
-        
-        const link = `https://wa.me/55${tel}?text=${encodeURIComponent(mensagem)}`;
-        window.open(link, '_blank');
-    }
 </script>
-
 </body>
 </html>
-
