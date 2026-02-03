@@ -242,6 +242,7 @@
 
     <div style="padding: 25px; max-width: 450px; margin: auto;">
         
+        
         <div style="margin-bottom: 25px;">
             <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
                 <span style="font-size: 1.5rem; margin-right: 15px;">📊</span>
@@ -291,87 +292,77 @@
 </main>
 
 <script>
-    // --- LÓGICA DE SEGURANÇA ÚNICA ---
     // --- CONFIGURAÇÕES DO DONO DO APP ---
-const MEU_WHATSAPP = "5511962356998"; 
-const LINK_PAGAMENTO = "https://mpago.la/2M2EUUp";
-const SEGREDO_SOMA = 888; 
-
-function gerenciarSeguranca() {
-    // 1. Garante que o ID seja fixo para este aparelho
-    let userID = localStorage.getItem('app_user_unique_id');
-    if (!userID) {
-        userID = Math.floor(1000 + Math.random() * 8999);
-        localStorage.setItem('app_user_unique_id', userID);
-    }
-    document.getElementById('meuID').innerText = userID;
-
-    // 2. Define a data para o cálculo mensal
-    const data = new Date();
-    const mes = data.getMonth() + 1;
-    const ano = data.getFullYear();
-
-    // 3. Configura Links (Atenção: usei a variável MEU_WHATSAPP ou o número direto)
-    document.getElementById('btnPagar').href = LINK_PAGAMENTO;
-    const msg = encodeURIComponent(`Já paguei! Libera meu acesso?\nID: ${userID}\nMês: ${mes}/${ano}`);
-    document.getElementById('btnZapAcesso').href = `https://wa.me/5511962356998?text=${msg}`;
-
-    // 4. VERIFICAÇÃO DE CHAVE SALVA
-    const chaveSalva = localStorage.getItem('chave_sucesso_ativada');
-    
-    // IMPORTANTE: Use o SEGREDO_SOMA igual ao do seu gerador (888)
-    const SEGREDO_SOMA_FIXO = 888; 
-    const calculoMensalCorreto = (parseInt(userID) * 3) + SEGREDO_SOMA_FIXO + mes + ano;
-
-    // 5. LÓGICA DE EXIBIÇÃO (Se a chave bater, esconde o bloqueio. Se não, mostra.)
-    if (chaveSalva && parseInt(chaveSalva) === calculoMensalCorreto) {
-        // CHAVE VÁLIDA: Libera o App
-        document.getElementById('bloqueioSeguranca').style.display = 'none';
-        document.getElementById('appMain').style.display = 'block';
-        if(document.getElementById('introApp')) document.getElementById('introApp').style.display = 'block';
-    } else {
-        // CHAVE INVÁLIDA OU EXPIRADA: Bloqueia o App
-        document.getElementById('bloqueioSeguranca').style.display = 'flex';
-        document.getElementById('appMain').style.display = 'none';
-        if(document.getElementById('introApp')) document.getElementById('introApp').style.display = 'none';
-    }
-}
-
-function validarChave() {
-    // 1. Pegamos o ID que está aparecendo na tela agora (o mesmo que ele te mandou)
-    const idAparelho = document.getElementById('meuID').innerText;
-    
-    // 2. Pegamos a chave que ele digitou
-    const chaveDigitada = document.getElementById('inputChave').value;
-    
-    // 3. Pegamos a data atual para o cálculo mensal
-    const data = new Date();
-    const mes = data.getMonth() + 1;
-    const ano = data.getFullYear();
-    
-    // 4. IMPORTANTE: Verifique se no seu index.html a variável SEGREDO_SOMA é 888
+    const MEU_WHATSAPP = "5511962356998"; 
+    const LINK_PAGAMENTO = "https://mpago.la/2M2EUUp";
     const SEGREDO_SOMA = 888; 
-
-    // 5. Fazemos o cálculo exatamente igual ao do gerador
-    const calculoValido = (parseInt(idAparelho) * 3) + SEGREDO_SOMA + mes + ano;
-
-    // 6. Comparação
-    if (parseInt(chaveDigitada) === calculoValido) {
-        // Salva a chave e o mês da ativação para não bloquear no dia seguinte
-        localStorage.setItem('chave_sucesso_ativada', chaveDigitada);
-        localStorage.setItem('mes_ativacao', mes); 
-        
-        alert("✅ Acesso mensal liberado! Boas corridas.");
-        
-        // Esconde o bloqueio imediatamente
-        document.getElementById('bloqueioSeguranca').style.display = 'none';
-    } else {
-        alert("❌ Chave inválida ou vencida. Verifique o mês atual.");
-    }
-}
-
-    // --- CÓDIGO ORIGINAL DA CALCULADORA ---
     const SALARIO_MIN_HORA = 12.00;
+
+    function gerenciarSeguranca() {
+        // 1. Garante que o ID seja fixo para este aparelho
+        let userID = localStorage.getItem('app_user_unique_id');
+        if (!userID) {
+            userID = Math.floor(1000 + Math.random() * 8999);
+            localStorage.setItem('app_user_unique_id', userID);
+        }
+
+        // Usamos um pequeno delay para garantir que o HTML carregou totalmente antes de mexer no CSS
+        setTimeout(() => {
+            const elID = document.getElementById('meuID');
+            if (elID) elID.innerText = userID;
+
+            const data = new Date();
+            const mes = data.getMonth() + 1;
+            const ano = data.getFullYear();
+
+            // Configura Links
+            const btnPagar = document.getElementById('btnPagar');
+            if(btnPagar) btnPagar.href = LINK_PAGAMENTO;
+
+            const btnZap = document.getElementById('btnZapAcesso');
+            if(btnZap) {
+                const msg = encodeURIComponent(`Já paguei! Libera meu acesso?\nID: ${userID}\nMês: ${mes}/${ano}`);
+                btnZap.href = `https://wa.me/${MEU_WHATSAPP}?text=${msg}`;
+            }
+
+            // 4. VERIFICAÇÃO DE CHAVE SALVA
+            const chaveSalva = localStorage.getItem('chave_sucesso_ativada');
+            const calculoMensalCorreto = (parseInt(userID) * 3) + SEGREDO_SOMA + mes + ano;
+
+            const bloqueio = document.getElementById('bloqueioSeguranca');
+            const app = document.getElementById('appMain');
+            const intro = document.getElementById('introApp');
+
+            // 5. LÓGICA DE EXIBIÇÃO PERSISTENTE
+            if (chaveSalva && parseInt(chaveSalva) === calculoMensalCorreto) {
+                if(bloqueio) bloqueio.style.display = 'none';
+                if(app) app.style.display = 'block';
+                if(intro) intro.style.display = 'block';
+            } else {
+                if(bloqueio) bloqueio.style.display = 'flex';
+                if(app) app.style.display = 'none';
+                if(intro) intro.style.display = 'none';
+            }
+        }, 100); 
+    }
+
+    function validarChave() {
+        const idAparelho = document.getElementById('meuID').innerText;
+        const chaveDigitada = document.getElementById('inputChave').value;
+        const data = new Date();
+        const mes = data.getMonth() + 1;
+        const ano = data.getFullYear();
+        
+        const calculoValido = (parseInt(idAparelho) * 3) + SEGREDO_SOMA + mes + ano;
+
+        if (parseInt(chaveDigitada) === calculoValido) {
+            localStorage.setItem('chave_sucesso_ativada', chaveDigitada);
+            alert("✅ Acesso mensal liberado! Boas corridas.");
+            location.reload(); // Recarrega para aplicar o desbloqueio permanentemente
+        } else {
+            alert("❌ Chave inválida ou vencida. Verifique o mês atual.");
+        }
+    }
 
     function calcular() {
         const bruto = parseFloat(document.getElementById('ganhoBruto').value) || 0;
@@ -470,14 +461,12 @@ function validarChave() {
         }
     }
 
-    // Inicialização unificada
     window.onload = function() {
         gerenciarSeguranca();
         carregarHistorico();
     };
-
-    
 </script>
+
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
