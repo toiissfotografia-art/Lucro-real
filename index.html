@@ -156,93 +156,21 @@
         </div>
     </section>
 
-    <section class="card">
-        <div id="fluxoInicio">
-            <h2 style="color: var(--success); font-size: 1.1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                🚀 Abrir Dia
-            </h2>
-            <div class="input-group">
-                <label>KM Inicial no Painel</label>
-                <input type="number" id="kmInicial" placeholder="Ex: 45000" style="font-size: 1.1rem;">
-            </div>
-            <div class="input-group">
-                <label>Gasto com Combustível (R$)</label>
-                <input type="number" id="gasInicial" value="0" placeholder="R$ 0,00">
-            </div>
-            <button class="btn-calc" style="background: var(--success); color: white; font-weight: bold; font-size: 1rem; padding: 15px;" onclick="abrirDia()">
-                INICIAR JORNADA AGORA
-            </button>
+    <section class="card" id="fluxoInicio">
+        <h2 style="color: var(--success); font-size: 1.1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+            🚀 Abrir Dia
+        </h2>
+        <div class="input-group">
+            <label>KM Inicial no Painel</label>
+            <input type="number" id="kmInicial" placeholder="Ex: 45000" style="font-size: 1.1rem;">
         </div>
-
-        <div id="fluxoFim" style="display: none;">
-            <h2 style="color: var(--danger); font-size: 1.1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                🏁 Fechar Dia
-            </h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary);">
-                <div>
-                    <small style="color: #64748b; font-weight: bold;">Iniciado às</small><br>
-                    <strong id="txtHoraInicio" style="color: var(--primary);">--:--</strong>
-                </div>
-                <div>
-                    <small style="color: #64748b; font-weight: bold;">KM Partida</small><br>
-                    <strong id="txtKmInicial" style="color: var(--primary);">0</strong>
-                </div>
-            </div>
-            <div class="input-group">
-                <label>KM Final Atual</label>
-                <input type="number" id="kmFinal" placeholder="Ex: 45220" style="font-size: 1.1rem;">
-            </div>
-            <div class="input-group">
-                <label>Total Bruto Ganhado (Apps)</label>
-                <input type="number" id="ganhoTotal" placeholder="R$ 0,00" style="font-size: 1.1rem; border: 2px solid #e2e8f0;">
-            </div>
-            <button class="btn-calc" style="background: var(--primary); color: white; font-weight: bold; padding: 15px;" onclick="fecharDia()">
-                FINALIZAR E CALCULAR LUCRO
-            </button>
-            <button class="btn-clear" onclick="cancelarJornada()" style="margin-top: 15px; width: 100%; border: none; background: transparent; color: #94a3b8; font-size: 0.8rem;">
-                Cancelar turno sem salvar
-            </button>
+        <div class="input-group">
+            <label>Gasto com Combustível (R$)</label>
+            <input type="number" id="gasInicial" value="0" placeholder="R$ 0,00">
         </div>
-    </section>
-
-    <section class="card" id="resultadoSection" style="display: none; border-top: 6px solid var(--success);">
-        <div style="text-align: center; margin-bottom: 15px;">
-            <h2 style="margin: 0; font-size: 1.2rem;">🏆 Resumo da Missão</h2>
-        </div>
-
-        <div class="res-grid">
-            <div id="statusCard" class="res-card highlight-card" style="grid-column: span 2; background: #f0fdf4; padding: 20px;">
-                <span style="font-size: 0.8rem; color: #166534; font-weight: bold;">DINHEIRO LIMPO NO BOLSO</span>
-                <strong id="resLucro" style="font-size: 2.2rem; display: block; color: #15803d;">R$ 0,00</strong>
-            </div>
-            <div class="res-card">
-                <span>R$ / Hora</span>
-                <strong id="resHora">R$ 0,00</strong>
-            </div>
-            <div class="res-card">
-                <span>R$ / KM</span>
-                <strong id="resKM">R$ 0,00</strong>
-            </div>
-            <div class="res-card">
-                <span>Tempo Online</span>
-                <strong id="resTempo">0h 0m</strong>
-            </div>
-            <div class="res-card">
-                <span>Total Rodado</span>
-                <strong id="resKmTotal">0 km</strong>
-            </div>
-        </div>
-
-        <div style="margin-top: 25px;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 5px; font-weight: bold;">
-                <span>Progresso da Meta</span>
-                <span id="metaPercent">0%</span>
-            </div>
-            <div style="background: #e2e8f0; border-radius: 50px; height: 12px; overflow: hidden;">
-                <div id="metaBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #4ade80, #22c55e); transition: width 1.5s ease-in-out;"></div>
-            </div>
-            <p id="valeAPena" style="text-align: center; font-weight: bold; margin-top: 15px; font-size: 1rem;"></p>
-        </div>
+        <button class="btn-calc" style="background: var(--success); color: white; font-weight: bold; font-size: 1rem; padding: 15px;" onclick="abrirDia()">
+            INICIAR JORNADA AGORA
+        </button>
     </section>
 
     <section class="card">
@@ -271,6 +199,62 @@
                 <option value="motorista">🚗 Carro (App)</option>
                 <option value="motoboy">🏍️ Motoboy (Entrega)</option>
             </select>
+        </div>
+    </section>
+
+    <section class="card" id="fluxoFim" style="display: none;">
+        <h2 style="color: var(--danger); font-size: 1.1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+            🏁 Fechar Dia
+        </h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary);">
+            <div>
+                <small style="color: #64748b; font-weight: bold;">Iniciado às</small><br>
+                <strong id="txtHoraInicio" style="color: var(--primary);">--:--</strong>
+            </div>
+            <div>
+                <small style="color: #64748b; font-weight: bold;">KM Partida</small><br>
+                <strong id="txtKmInicial" style="color: var(--primary);">0</strong>
+            </div>
+        </div>
+        <div class="input-group">
+            <label>KM Final Atual</label>
+            <input type="number" id="kmFinal" placeholder="Ex: 45220" style="font-size: 1.1rem;">
+        </div>
+        <div class="input-group">
+            <label>Total Bruto Ganhado (Apps)</label>
+            <input type="number" id="ganhoTotal" placeholder="R$ 0,00" style="font-size: 1.1rem; border: 2px solid #e2e8f0;">
+        </div>
+        <button class="btn-calc" style="background: var(--primary); color: white; font-weight: bold; padding: 18px; font-size: 1.1rem;" onclick="fecharDia()">
+            FINALIZAR E CALCULAR LUCRO
+        </button>
+        <button class="btn-clear" onclick="cancelarJornada()" style="margin-top: 15px; width: 100%; border: none; background: transparent; color: #94a3b8; font-size: 0.8rem;">
+            Cancelar turno sem salvar
+        </button>
+    </section>
+
+    <section class="card" id="resultadoSection" style="display: none; border-top: 6px solid var(--success);">
+        <div style="text-align: center; margin-bottom: 15px;">
+            <h2 style="margin: 0; font-size: 1.2rem;">🏆 Resumo da Missão</h2>
+        </div>
+        <div class="res-grid">
+            <div id="statusCard" class="res-card highlight-card" style="grid-column: span 2; background: #f0fdf4; padding: 20px;">
+                <span style="font-size: 0.8rem; color: #166534; font-weight: bold;">DINHEIRO LIMPO NO BOLSO</span>
+                <strong id="resLucro" style="font-size: 2.2rem; display: block; color: #15803d;">R$ 0,00</strong>
+            </div>
+            <div class="res-card"><span>R$ / Hora</span><strong id="resHora">R$ 0,00</strong></div>
+            <div class="res-card"><span>R$ / KM</span><strong id="resKM">R$ 0,00</strong></div>
+            <div class="res-card"><span>Tempo Online</span><strong id="resTempo">0h 0m</strong></div>
+            <div class="res-card"><span>Total Rodado</span><strong id="resKmTotal">0 km</strong></div>
+        </div>
+        <div style="margin-top: 25px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 5px; font-weight: bold;">
+                <span>Progresso da Meta</span>
+                <span id="metaPercent">0%</span>
+            </div>
+            <div style="background: #e2e8f0; border-radius: 50px; height: 12px; overflow: hidden;">
+                <div id="metaBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #4ade80, #22c55e); transition: width 1.5s ease-in-out;"></div>
+            </div>
+            <p id="valeAPena" style="text-align: center; font-weight: bold; margin-top: 15px; font-size: 1rem;"></p>
         </div>
     </section>
 
