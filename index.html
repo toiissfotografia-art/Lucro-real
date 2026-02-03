@@ -298,6 +298,7 @@ const LINK_PAGAMENTO = "https://mpago.la/2M2EUUp";
 const SEGREDO_SOMA = 888; 
 
 function gerenciarSeguranca() {
+    // 1. Garante que o ID seja fixo para este aparelho
     let userID = localStorage.getItem('app_user_unique_id');
     if (!userID) {
         userID = Math.floor(1000 + Math.random() * 8999);
@@ -305,24 +306,34 @@ function gerenciarSeguranca() {
     }
     document.getElementById('meuID').innerText = userID;
 
+    // 2. Define a data para o cálculo mensal
     const data = new Date();
     const mes = data.getMonth() + 1;
     const ano = data.getFullYear();
 
-    // Configura Botão de Pagamento
+    // 3. Configura Links (Atenção: usei a variável MEU_WHATSAPP ou o número direto)
     document.getElementById('btnPagar').href = LINK_PAGAMENTO;
-
-    // Configura Botão de Suporte/Envio de ID
     const msg = encodeURIComponent(`Já paguei! Libera meu acesso?\nID: ${userID}\nMês: ${mes}/${ano}`);
-    document.getElementById('btnZapAcesso').href = `https://wa.me/${5511962356998}?text=${msg}`;
+    document.getElementById('btnZapAcesso').href = `https://wa.me/5511962356998?text=${msg}`;
 
-    // VERIFICAÇÃO AUTOMÁTICA MENSAL
+    // 4. VERIFICAÇÃO DE CHAVE SALVA
     const chaveSalva = localStorage.getItem('chave_sucesso_ativada');
-    const calculoMensalCorreto = (parseInt(userID) * 3) + SEGREDO_SOMA + mes + ano;
+    
+    // IMPORTANTE: Use o SEGREDO_SOMA igual ao do seu gerador (888)
+    const SEGREDO_SOMA_FIXO = 888; 
+    const calculoMensalCorreto = (parseInt(userID) * 3) + SEGREDO_SOMA_FIXO + mes + ano;
 
-    if (chaveSalva != calculoMensalCorreto) {
+    // 5. LÓGICA DE EXIBIÇÃO (Se a chave bater, esconde o bloqueio. Se não, mostra.)
+    if (chaveSalva && parseInt(chaveSalva) === calculoMensalCorreto) {
+        // CHAVE VÁLIDA: Libera o App
+        document.getElementById('bloqueioSeguranca').style.display = 'none';
+        document.getElementById('appMain').style.display = 'block';
+        if(document.getElementById('introApp')) document.getElementById('introApp').style.display = 'block';
+    } else {
+        // CHAVE INVÁLIDA OU EXPIRADA: Bloqueia o App
         document.getElementById('bloqueioSeguranca').style.display = 'flex';
         document.getElementById('appMain').style.display = 'none';
+        if(document.getElementById('introApp')) document.getElementById('introApp').style.display = 'none';
     }
 }
 
@@ -476,4 +487,3 @@ function validarChave() {
 </script>
 </body>
 </html>
-
