@@ -1,0 +1,23 @@
+{
+  "name": "Lucro Real Motorista",
+  "short_name": "Lucro Real",
+  "description": "Calculadora de Lucro Real para Motoristas e Motoboys",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f7f6",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
+

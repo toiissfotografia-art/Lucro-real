@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucro Real - Motorista & Motoboy</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon.png">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f4f7f6;
+            --card: #ffffff;
+            --text: #1e293b;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; }
+
+        header { background: var(--primary); color: white; padding: 1.5rem; text-align: center; border-radius: 0 0 20px 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        
+        main { padding: 1rem; max-width: 500px; margin: auto; }
+
+        .card { background: var(--card); padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 1rem; }
+        h2 { font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .input-group { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; outline-color: var(--primary); }
+
+        button { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.2s; }
+        .btn-calc { background: var(--primary); color: white; }
+        .btn-calc:active { transform: scale(0.98); }
+        .btn-clear { background: transparent; color: var(--danger); font-size: 0.8rem; margin-top: 1rem; border: 1px solid var(--danger); }
+
+        /* Estilos de Resultado */
+        .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .res-card { padding: 10px; border-radius: 8px; background: #f8fafc; border-left: 4px solid var(--primary); }
+        .res-card span { display: block; font-size: 0.75rem; color: #64748b; }
+        .res-card strong { font-size: 1.1rem; }
+
+        .highlight-card { grid-column: span 2; text-align: center; padding: 20px; }
+        .highlight-card strong { font-size: 1.8rem; display: block; }
+
+        .alert-prejuizo { background: #fee2e2; border-color: var(--danger); color: var(--danger); }
+        .alert-ok { background: #dcfce7; border-color: var(--success); color: var(--success); }
+
+        .frase-dinamica { font-style: italic; font-size: 0.9rem; text-align: center; margin-top: 1rem; color: #475569; }
+
+        #historico-lista { margin-top: 10px; }
+        .hist-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.85rem; }
+
+        /* --- NOVAS ESTILIZAÇÕES --- */
+        .meta-container { margin: 15px 0; background: #eee; border-radius: 10px; height: 20px; overflow: hidden; position: relative; }
+        .meta-bar { background: var(--success); height: 100%; width: 0%; transition: 0.5s; }
+        .meta-text { position: absolute; width: 100%; text-align: center; font-size: 0.7rem; top: 2px; font-weight: bold; }
+
+        .afiliados-section { background: #eff6ff; border: 1px dashed var(--primary); padding: 10px; border-radius: 8px; margin-top: 15px; }
+        .afiliados-title { font-size: 0.75rem; font-weight: bold; color: var(--primary); margin-bottom: 5px; display: block; }
+        .btn-afiliado { background: white; border: 1px solid #bfdbfe; padding: 8px; border-radius: 5px; display: block; text-decoration: none; color: #1e40af; font-size: 0.8rem; text-align: center; margin-bottom: 5px; }
+
+        /* ESTILO DA TELA DE BLOQUEIO */
+        #bloqueioSeguranca {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 99999; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            padding: 30px; text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="introApp" style="padding: 20px; text-align: center; background: white; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    <h2 style="color: var(--primary); font-size: 1.5rem;">🚀 Máquina de Lucro Real</h2>
+    <p style="margin: 10px 0; font-size: 0.9rem; color: #64748b;">Descubra quanto você ganha *de verdade* por hora e por KM rodado.</p>
+    
+    <div style="display: flex; gap: 10px; justify-content: center; margin: 15px 0;">
+        <span style="font-size: 0.75rem; background: #dcfce7; color: #166534; padding: 5px 10px; border-radius: 20px;">✓ Lucro Líquido Real</span>
+        <span style="font-size: 0.75rem; background: #dcfce7; color: #166534; padding: 5px 10px; border-radius: 20px;">✓ Meta Diária</span>
+    </div>
+</div>    
+
+<div id="bloqueioSeguranca" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:99999; display:none; flex-direction:column; overflow-y: auto;">
+    
+    <div style="background: linear-gradient(135deg, var(--primary), #1e40af); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px;">
+        <h2 style="font-size: 1.8rem; margin-bottom: 10px; color: white;">💰 Pare de trabalhar de graça!</h2>
+        <p style="opacity: 0.9; font-size: 1rem;">Muitos motoristas pagam para trabalhar e não sabem. Descubra seu **Lucro Real** agora.</p>
+    </div>
+
+    <div style="padding: 25px;">
+        <div style="margin-bottom: 25px;">
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <span style="font-size: 1.5rem; margin-right: 15px;">📊</span>
+                <p style="font-size: 0.95rem;"><b>Controle Total:</b> Saiba exatamente quanto sobra após gasolina, taxas e manutenção.</p>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <span style="font-size: 1.5rem; margin-right: 15px;">🎯</span>
+                <p style="font-size: 0.95rem;"><b>Meta Inteligente:</b> Veja quanto falta para bater sua meta do dia em tempo real.</p>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <span style="font-size: 1.5rem; margin-right: 15px;">📈</span>
+                <p style="font-size: 0.95rem;"><b>Histórico Mensal:</b> Não perca suas contas. Tudo salvo para você evoluir.</p>
+            </div>
+        </div>
+
+        <div style="background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid #e2e8f0; text-align: center;">
+            <h3 style="color: var(--text); margin-bottom: 5px;">Acesso Premium Liberado</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Tenha a ferramenta definitiva por apenas:</p>
+            <div style="font-size: 2rem; font-weight: bold; color: var(--success); margin-bottom: 15px;">R$ 9,90 <span style="font-size: 0.9rem; color: #64748b;">/mês</span></div>
+            
+            <a id="btnPagar" href="#" target="_blank" style="background: var(--success); color: white; padding: 18px; width: 100%; border-radius: 10px; text-decoration: none; font-weight: bold; display: block; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);">QUERO COMEÇAR AGORA</a>
+        </div>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <p style="font-size: 0.85rem; color: #64748b;">Já pagou? Seu ID de ativação é:</p>
+            <div id="meuID" style="font-size: 1.4rem; font-weight: bold; margin: 10px 0; color: var(--primary); letter-spacing: 2px;">0000</div>
+            
+            <a id="btnZapAcesso" href="#" style="color: var(--primary); text-decoration: underline; font-weight: bold; font-size: 0.9rem;">Já paguei, enviar ID pelo WhatsApp</a>
+
+            <div style="margin-top: 25px; padding: 15px; border-top: 1px solid #eee;">
+                <label style="font-size: 0.8rem; font-weight: bold;">Ativar com minha chave:</label>
+                <input type="number" id="inputChave" placeholder="Cole sua chave aqui" style="margin-top: 5px; text-align: center;">
+                <button onclick="validarChave()" style="background: var(--text); color: white; margin-top: 10px; padding: 12px;">ATIVAR ACESSO</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<header>
+    <h1>Lucro Real</h1>
+    <p>Calculadora do Motorista & Motoboy</p>
+</header>
+
+<main id="appMain">
+    <section class="card">
+        <div class="input-group">
+            <label>Sua Atividade</label>
+            <select id="tipo">
+                <option value="motorista">🚗 Motorista de App</option>
+                <option value="motoboy">🏍️ Motoboy</option>
+            </select>
+        </div>
+
+        <div class="input-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label>Ganho Bruto (R$)</label>
+                <input type="number" id="ganhoBruto" placeholder="0,00" step="0.01">
+            </div>
+            <div>
+                <label>Meta Diária (R$)</label>
+                <input type="number" id="metaDiaria" value="150">
+            </div>
+        </div>
+
+        <div class="input-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label>Horas Online</label>
+                <input type="number" id="horas" placeholder="Ex: 8">
+            </div>
+            <div>
+                <label>KM Rodados</label>
+                <input type="number" id="km" placeholder="Ex: 150">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Gasto Combustível (R$)</label>
+            <input type="number" id="combustivel" placeholder="0,00">
+        </div>
+
+        <div class="input-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label>Taxa Média App (%)</label>
+                <input type="number" id="taxaApp" value="25">
+            </div>
+            <div>
+                <label>Manutenção/KM (R$)</label>
+                <input type="number" id="depreKM" value="0.20" step="0.01">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Outros Custos (Refeição, etc)</label>
+            <input type="number" id="outrosCustos" placeholder="R$ 0,00" value="0">
+        </div>
+
+        <button class="btn-calc" onclick="calcular()">Calcular Lucro Real</button>
+    </section>
+
+    <section class="card" id="resultadoSection" style="display: none;">
+        <h2>Resultado de Hoje</h2>
+        
+        <div class="meta-container">
+            <div id="metaBar" class="meta-bar"></div>
+            <div id="metaText" class="meta-text">0% da meta</div>
+        </div>
+
+        <div class="res-grid">
+            <div id="statusCard" class="res-card highlight-card">
+                <span id="labelLucro">LUCRO LÍQUIDO</span>
+                <strong id="resLucro">R$ 0,00</strong>
+            </div>
+            <div class="res-card">
+                <span>Ganho/Hora</span>
+                <strong id="resHora">R$ 0,00</strong>
+            </div>
+            <div class="res-card">
+                <span>Ganho/KM</span>
+                <strong id="resKM">R$ 0,00</strong>
+            </div>
+            <div class="res-card">
+                <span>Taxas App</span>
+                <strong id="resTaxa">R$ 0,00</strong>
+            </div>
+            <div class="res-card">
+                <span>Manutenção (Reserva)</span>
+                <strong id="resDepre">R$ 0,00</strong>
+            </div>
+        </div>
+
+        <p id="fraseDinamica" class="frase-dinamica"></p>
+        <p id="valeAPena" style="text-align: center; font-weight: bold; margin-top: 10px;"></p>
+
+        <div class="afiliados-section">
+            <span class="afiliados-title">🔧 ECONOMIZE NA MANUTENÇÃO:</span>
+            <a href="#" class="btn-afiliado">Pneus com Desconto (Seu Link Aqui)</a>
+            <a href="#" class="btn-afiliado">Troca de Óleo em Oferta</a>
+        </div>
+
+        <div id="bloqueioSeguranca" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:99999; display:none; flex-direction:column; overflow-y: auto;">
+    
+    <div style="background: linear-gradient(135deg, #2563eb, #1e40af); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <h2 style="font-size: 1.8rem; line-height: 1.2; color: white;">💰 Pare de trabalhar para o Posto!</h2>
+        <p style="margin-top: 10px; opacity: 0.9; font-size: 1rem;">Muitos motoristas pagam para trabalhar e não sabem. <br> Descubra seu **Lucro Real** e mude seu jogo.</p>
+    </div>
+
+    <div style="padding: 25px; max-width: 450px; margin: auto;">
+        
+        <div style="margin-bottom: 25px;">
+            <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+                <span style="font-size: 1.5rem; margin-right: 15px;">📊</span>
+                <p style="font-size: 0.95rem; color: #334155;"><b>Controle Total:</b> Saiba o lucro líquido após descontar combustível, taxas e manutenção.</p>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+                <span style="font-size: 1.5rem; margin-right: 15px;">🎯</span>
+                <p style="font-size: 0.95rem; color: #334155;"><b>Metas Diárias:</b> Acompanhe em tempo real quanto falta para bater sua meta e ir para casa descansar.</p>
+            </div>
+        </div>
+
+        <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 2px solid #e2e8f0; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+            <h3 style="margin-bottom: 5px; color: #1e293b; font-size: 1.1rem;">Assinatura Mensal Premium</h3>
+            <div style="font-size: 2.2rem; font-weight: bold; color: #22c55e; margin-bottom: 20px;">R$ 9,90</div>
+            
+            <a href="https://mpago.la/2M2EUUp" target="_blank" style="background: #22c55e; color: white; padding: 18px; width: 100%; border-radius: 12px; text-decoration: none; font-weight: bold; display: block; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);">
+                QUERO MEU ACESSO AGORA
+            </a>
+            
+            <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 12px;">Pague com Pix ou Cartão via Mercado Pago.</p>
+        </div>
+
+        <div style="margin-top: 30px; text-align: center; border-top: 1px dotted #cbd5e1; padding-top: 20px;">
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 5px;">Seu ID de Identificação:</p>
+            <div id="meuID" style="font-size: 1.6rem; font-weight: bold; color: #2563eb; background: #f1f5f9; padding: 10px 20px; border-radius: 8px; display: inline-block; letter-spacing: 2px;">0000</div>
+            
+            <br><br>
+            <a id="btnZapAcesso" href="#" style="color: #2563eb; font-weight: bold; text-decoration: underline; font-size: 0.9rem;">
+                Já paguei! Enviar ID pelo WhatsApp
+            </a>
+
+            <div style="margin-top: 30px; background: #f1f5f9; padding: 15px; border-radius: 12px;">
+                <label style="font-size: 0.7rem; font-weight: bold; display: block; margin-bottom: 8px; color: #475569; text-transform: uppercase;">Já tem a Chave? Ative aqui:</label>
+                <input type="number" id="inputChave" placeholder="Ex: 8542" style="text-align: center; font-size: 1.2rem; padding: 10px; border: 1px solid #cbd5e1;">
+                <button onclick="validarChave()" style="background: #1e293b; color: white; margin-top: 10px; width: 100%; border: none; padding: 12px; font-weight: bold; border-radius: 8px;">ATIVAR APLICATIVO</button>
+            </div>
+        </div>
+    </div>
+</div>
+    </section>
+
+    <section class="card">
+        <h2>Resumo Mensal (Salvo)</h2>
+        <div id="historico-lista"></div>
+        <button class="btn-clear" onclick="limparHistorico()">Limpar Tudo</button>
+    </section>
+</main>
+
+<script>
+    // --- LÓGICA DE SEGURANÇA ÚNICA ---
+    // --- CONFIGURAÇÕES DO DONO DO APP ---
+const MEU_WHATSAPP = "5511962356998"; 
+const LINK_PAGAMENTO = "https://mpago.la/2M2EUUp";
+const SEGREDO_SOMA = 777; 
+
+function gerenciarSeguranca() {
+    let userID = localStorage.getItem('app_user_unique_id');
+    if (!userID) {
+        userID = Math.floor(1000 + Math.random() * 8999);
+        localStorage.setItem('app_user_unique_id', userID);
+    }
+    document.getElementById('meuID').innerText = userID;
+
+    const data = new Date();
+    const mes = data.getMonth() + 1;
+    const ano = data.getFullYear();
+
+    // Configura Botão de Pagamento
+    document.getElementById('btnPagar').href = LINK_PAGAMENTO;
+
+    // Configura Botão de Suporte/Envio de ID
+    const msg = encodeURIComponent(`Já paguei! Libera meu acesso?\nID: ${userID}\nMês: ${mes}/${ano}`);
+    document.getElementById('btnZapAcesso').href = `https://wa.me/${5511962356998}?text=${msg}`;
+
+    // VERIFICAÇÃO AUTOMÁTICA MENSAL
+    const chaveSalva = localStorage.getItem('chave_sucesso_ativada');
+    const calculoMensalCorreto = (parseInt(userID) * 3) + SEGREDO_SOMA + mes + ano;
+
+    if (chaveSalva != calculoMensalCorreto) {
+        document.getElementById('bloqueioSeguranca').style.display = 'flex';
+        document.getElementById('appMain').style.display = 'none';
+    }
+}
+
+function validarChave() {
+    const id = localStorage.getItem('app_user_unique_id');
+    const chaveDigitada = document.getElementById('inputChave').value;
+    const data = new Date();
+    const calculoValido = (parseInt(id) * 3) + SEGREDO_SOMA + (data.getMonth() + 1) + data.getFullYear();
+
+    if (parseInt(chaveDigitada) === calculoValido) {
+        localStorage.setItem('chave_sucesso_ativada', chaveDigitada);
+        alert("Acesso mensal liberado! Boas corridas.");
+        location.reload();
+    } else {
+        alert("Chave inválida ou vencida. Verifique o mês atual.");
+    }
+}
+
+    // --- CÓDIGO ORIGINAL DA CALCULADORA ---
+    const SALARIO_MIN_HORA = 12.00;
+
+    function calcular() {
+        const bruto = parseFloat(document.getElementById('ganhoBruto').value) || 0;
+        const horas = parseFloat(document.getElementById('horas').value) || 1;
+        const km = parseFloat(document.getElementById('km').value) || 1;
+        const combustivel = parseFloat(document.getElementById('combustivel').value) || 0;
+        const taxaPerc = parseFloat(document.getElementById('taxaApp').value) || 0;
+        const depreKM = parseFloat(document.getElementById('depreKM').value) || 0;
+        const outros = parseFloat(document.getElementById('outrosCustos').value) || 0;
+        const meta = parseFloat(document.getElementById('metaDiaria').value) || 1;
+
+        const valorTaxaApp = bruto * (taxaPerc / 100);
+        const custoManutencao = km * depreKM;
+        const custosTotais = valorTaxaApp + combustivel + outros + custoManutencao;
+        const lucroLiquido = bruto - custosTotais;
+        const ganhoHora = lucroLiquido / horas;
+        const ganhoKM = lucroLiquido / km;
+
+        document.getElementById('resultadoSection').style.display = 'block';
+        document.getElementById('resLucro').innerText = `R$ ${lucroLiquido.toFixed(2)}`;
+        document.getElementById('resHora').innerText = `R$ ${ganhoHora.toFixed(2)}`;
+        document.getElementById('resKM').innerText = `R$ ${ganhoKM.toFixed(2)}`;
+        document.getElementById('resTaxa').innerText = `R$ ${valorTaxaApp.toFixed(2)}`;
+        document.getElementById('resDepre').innerText = `R$ ${custoManutencao.toFixed(2)}`;
+
+        const porcMeta = Math.min((lucroLiquido / meta) * 100, 100);
+        document.getElementById('metaBar').style.width = (porcMeta > 0 ? porcMeta : 0) + '%';
+        document.getElementById('metaText').innerText = `${porcMeta.toFixed(0)}% da meta batida`;
+
+        const statusCard = document.getElementById('statusCard');
+        const valeAPena = document.getElementById('valeAPena');
+        
+        if (lucroLiquido <= 0) {
+            statusCard.className = 'res-card highlight-card alert-prejuizo';
+            document.getElementById('labelLucro').innerText = 'PREJUÍZO!';
+            valeAPena.innerText = "❌ Hoje não valeu a pena.";
+            valeAPena.style.color = "var(--danger)";
+        } else {
+            statusCard.className = 'res-card highlight-card alert-ok';
+            document.getElementById('labelLucro').innerText = 'LUCRO LÍQUIDO';
+            
+            if (ganhoHora < SALARIO_MIN_HORA) {
+                valeAPena.innerText = "⚠️ O ganho por hora está baixo!";
+                valeAPena.style.color = "var(--warning)";
+            } else {
+                valeAPena.innerText = "✅ Valeu a pena! Bom trabalho.";
+                valeAPena.style.color = "var(--success)";
+            }
+        }
+
+        document.getElementById('fraseDinamica').innerText = 
+            `Você trabalhou ${horas} horas hoje para ganhar R$ ${lucroLiquido.toFixed(2)} líquidos.`;
+
+        salvarRegistro(lucroLiquido);
+        carregarHistorico();
+    }
+
+    function salvarRegistro(lucro) {
+        let historico = JSON.parse(localStorage.getItem('historico_lucro') || '[]');
+        const novoRegistro = { data: new Date().toLocaleDateString('pt-BR'), lucro: lucro };
+        historico.push(novoRegistro);
+        localStorage.setItem('historico_lucro', JSON.stringify(historico));
+    }
+
+    function carregarHistorico() {
+        const hist = JSON.parse(localStorage.getItem('historico_lucro') || '[]');
+        const container = document.getElementById('historico-lista');
+        if(!container) return;
+        const totalLucro = hist.reduce((acc, curr) => acc + curr.lucro, 0);
+        
+        container.innerHTML = `
+            <div class="hist-item" style="font-weight: bold; font-size: 1rem;">
+                <span>Total Acumulado:</span>
+                <span style="color: ${totalLucro >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                    R$ ${totalLucro.toFixed(2)}
+                </span>
+            </div>
+            <p style="font-size: 0.7rem; color: #999; margin-top: 5px;">Últimos registros:</p>
+        `;
+
+        hist.slice(-5).reverse().forEach(item => {
+            container.innerHTML += `
+                <div class="hist-item">
+                    <span>${item.data}</span>
+                    <span>R$ ${item.lucro.toFixed(2)}</span>
+                </div>
+            `;
+        });
+    }
+
+    function limparHistorico() {
+        if(confirm("Deseja apagar todo o histórico?")) {
+            localStorage.removeItem('historico_lucro');
+            carregarHistorico();
+            document.getElementById('resultadoSection').style.display = 'none';
+        }
+    }
+
+    // Inicialização unificada
+    window.onload = function() {
+        gerenciarSeguranca();
+        carregarHistorico();
+    };
+
+    
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log("PWA Ativo!"))
+      .catch(err => console.log("Erro PWA:", err));
+  }
+</script>
+</body>
+</html>
