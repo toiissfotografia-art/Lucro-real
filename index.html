@@ -138,156 +138,146 @@
 </header>
 
 <main id="appMain">
-    <section class="card">
-        <div class="input-group">
-            <label>Sua Atividade</label>
-            <select id="tipo">
-                <option value="motorista">🚗 Motorista de App</option>
-                <option value="motoboy">🏍️ Motoboy</option>
-            </select>
+    <section class="card" style="background: linear-gradient(135deg, #1e293b, #334155); color: white; border: none; padding: 20px;">
+        <div id="statusTrabalhando" style="display: none; text-align: center;">
+            <div class="pulse-icon" style="color: #4ade80; font-size: 0.8rem; font-weight: bold; margin-bottom: 8px; letter-spacing: 1px;">
+                ● JORNADA ATIVA
+            </div>
+            <div id="cronometroDisplay" style="font-size: 2.5rem; font-family: 'Courier New', monospace; font-weight: bold; text-shadow: 0 0 15px rgba(74, 222, 128, 0.3);">
+                00:00:00
+            </div>
+            <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.8;">O lucro por hora está sendo calculado...</p>
         </div>
 
-        <div class="input-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div>
-                <label>Ganho Bruto (R$)</label>
-                <input type="number" id="ganhoBruto" placeholder="0,00" step="0.01">
-            </div>
-            <div>
-                <label>Meta Diária (R$)</label>
-                <input type="number" id="metaDiaria" value="150">
-            </div>
+        <div id="statusOffline" style="text-align: center; padding: 10px;">
+            <div style="font-size: 2rem; margin-bottom: 10px;">🚗</div>
+            <h2 style="color: white; margin: 0; font-size: 1.3rem;">Pronto para Rodar?</h2>
+            <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 0.85rem;">Inicie o turno para rastrear seus ganhos.</p>
         </div>
-
-        <div class="input-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div>
-                <label>Horas Online</label>
-                <input type="number" id="horas" placeholder="Ex: 8">
-            </div>
-            <div>
-                <label>KM Rodados</label>
-                <input type="number" id="km" placeholder="Ex: 150">
-            </div>
-        </div>
-
-        <div class="input-group">
-            <label>Gasto Combustível (R$)</label>
-            <input type="number" id="combustivel" placeholder="0,00">
-        </div>
-
-        <div class="input-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div>
-                <label>Taxa Média App (%)</label>
-                <input type="number" id="taxaApp" value="25">
-            </div>
-            <div>
-                <label>Manutenção/KM (R$)</label>
-                <input type="number" id="depreKM" value="0.20" step="0.01">
-            </div>
-        </div>
-
-        <div class="input-group">
-            <label>Outros Custos (Refeição, etc)</label>
-            <input type="number" id="outrosCustos" placeholder="R$ 0,00" value="0">
-        </div>
-
-        <button class="btn-calc" onclick="calcular()">Calcular Lucro Real</button>
     </section>
 
-    <section class="card" id="resultadoSection" style="display: none;">
-        <h2>Resultado de Hoje</h2>
-        
-        <div class="meta-container">
-            <div id="metaBar" class="meta-bar"></div>
-            <div id="metaText" class="meta-text">0% da meta</div>
+    <section class="card">
+        <div id="fluxoInicio">
+            <h2 style="color: var(--success); font-size: 1.1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                🚀 Abrir Dia
+            </h2>
+            <div class="input-group">
+                <label>KM Inicial no Painel</label>
+                <input type="number" id="kmInicial" placeholder="Ex: 45000" style="font-size: 1.1rem;">
+            </div>
+            <div class="input-group">
+                <label>Gasto com Combustível (R$)</label>
+                <input type="number" id="gasInicial" value="0" placeholder="R$ 0,00">
+            </div>
+            <button class="btn-calc" style="background: var(--success); color: white; font-weight: bold; font-size: 1rem; padding: 15px;" onclick="abrirDia()">
+                INICIAR JORNADA AGORA
+            </button>
+        </div>
+
+        <div id="fluxoFim" style="display: none;">
+            <h2 style="color: var(--danger); font-size: 1.1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                🏁 Fechar Dia
+            </h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary);">
+                <div>
+                    <small style="color: #64748b; font-weight: bold;">Iniciado às</small><br>
+                    <strong id="txtHoraInicio" style="color: var(--primary);">--:--</strong>
+                </div>
+                <div>
+                    <small style="color: #64748b; font-weight: bold;">KM Partida</small><br>
+                    <strong id="txtKmInicial" style="color: var(--primary);">0</strong>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>KM Final Atual</label>
+                <input type="number" id="kmFinal" placeholder="Ex: 45220" style="font-size: 1.1rem;">
+            </div>
+            <div class="input-group">
+                <label>Total Bruto Ganhado (Apps)</label>
+                <input type="number" id="ganhoTotal" placeholder="R$ 0,00" style="font-size: 1.1rem; border: 2px solid #e2e8f0;">
+            </div>
+            <button class="btn-calc" style="background: var(--primary); color: white; font-weight: bold; padding: 15px;" onclick="fecharDia()">
+                FINALIZAR E CALCULAR LUCRO
+            </button>
+            <button class="btn-clear" onclick="cancelarJornada()" style="margin-top: 15px; width: 100%; border: none; background: transparent; color: #94a3b8; font-size: 0.8rem;">
+                Cancelar turno sem salvar
+            </button>
+        </div>
+    </section>
+
+    <section class="card" id="resultadoSection" style="display: none; border-top: 6px solid var(--success);">
+        <div style="text-align: center; margin-bottom: 15px;">
+            <h2 style="margin: 0; font-size: 1.2rem;">🏆 Resumo da Missão</h2>
         </div>
 
         <div class="res-grid">
-            <div id="statusCard" class="res-card highlight-card">
-                <span id="labelLucro">LUCRO LÍQUIDO</span>
-                <strong id="resLucro">R$ 0,00</strong>
+            <div id="statusCard" class="res-card highlight-card" style="grid-column: span 2; background: #f0fdf4; padding: 20px;">
+                <span style="font-size: 0.8rem; color: #166534; font-weight: bold;">DINHEIRO LIMPO NO BOLSO</span>
+                <strong id="resLucro" style="font-size: 2.2rem; display: block; color: #15803d;">R$ 0,00</strong>
             </div>
             <div class="res-card">
-                <span>Ganho/Hora</span>
+                <span>R$ / Hora</span>
                 <strong id="resHora">R$ 0,00</strong>
             </div>
             <div class="res-card">
-                <span>Ganho/KM</span>
+                <span>R$ / KM</span>
                 <strong id="resKM">R$ 0,00</strong>
             </div>
             <div class="res-card">
-                <span>Taxas App</span>
-                <strong id="resTaxa">R$ 0,00</strong>
+                <span>Tempo Online</span>
+                <strong id="resTempo">0h 0m</strong>
             </div>
             <div class="res-card">
-                <span>Manutenção (Reserva)</span>
-                <strong id="resDepre">R$ 0,00</strong>
+                <span>Total Rodado</span>
+                <strong id="resKmTotal">0 km</strong>
             </div>
         </div>
 
-        <p id="fraseDinamica" class="frase-dinamica"></p>
-        <p id="valeAPena" style="text-align: center; font-weight: bold; margin-top: 10px;"></p>
-
-        <div class="afiliados-section">
-            <span class="afiliados-title">🔧 ECONOMIZE NA MANUTENÇÃO:</span>
-            <a href="#" class="btn-afiliado">Pneus com Desconto (Seu Link Aqui)</a>
-            <a href="#" class="btn-afiliado">Troca de Óleo em Oferta</a>
-        </div>
-
-        <div id="bloqueioSeguranca" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:99999; display:none; flex-direction:column; overflow-y: auto;">
-    
-    <div style="background: linear-gradient(135deg, #2563eb, #1e40af); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-        <h2 style="font-size: 1.8rem; line-height: 1.2; color: white;">💰 Pare de trabalhar para o Posto!</h2>
-        <p style="margin-top: 10px; opacity: 0.9; font-size: 1rem;">Muitos motoristas pagam para trabalhar e não sabem. <br> Descubra seu **Lucro Real** e mude seu jogo.</p>
-    </div>
-
-    <div style="padding: 25px; max-width: 450px; margin: auto;">
-        
-        
-        <div style="margin-bottom: 25px;">
-            <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
-                <span style="font-size: 1.5rem; margin-right: 15px;">📊</span>
-                <p style="font-size: 0.95rem; color: #334155;"><b>Controle Total:</b> Saiba o lucro líquido após descontar combustível, taxas e manutenção.</p>
+        <div style="margin-top: 25px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 5px; font-weight: bold;">
+                <span>Progresso da Meta</span>
+                <span id="metaPercent">0%</span>
             </div>
-            <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
-                <span style="font-size: 1.5rem; margin-right: 15px;">🎯</span>
-                <p style="font-size: 0.95rem; color: #334155;"><b>Metas Diárias:</b> Acompanhe em tempo real quanto falta para bater sua meta e ir para casa descansar.</p>
+            <div style="background: #e2e8f0; border-radius: 50px; height: 12px; overflow: hidden;">
+                <div id="metaBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #4ade80, #22c55e); transition: width 1.5s ease-in-out;"></div>
             </div>
+            <p id="valeAPena" style="text-align: center; font-weight: bold; margin-top: 15px; font-size: 1rem;"></p>
         </div>
-
-        <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 2px solid #e2e8f0; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-            <h3 style="margin-bottom: 5px; color: #1e293b; font-size: 1.1rem;">Assinatura Mensal Premium</h3>
-            <div style="font-size: 2.2rem; font-weight: bold; color: #22c55e; margin-bottom: 20px;">R$ 9,90</div>
-            
-            <a href="https://mpago.la/2M2EUUp" target="_blank" style="background: #22c55e; color: white; padding: 18px; width: 100%; border-radius: 12px; text-decoration: none; font-weight: bold; display: block; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);">
-                QUERO MEU ACESSO AGORA
-            </a>
-            
-            <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 12px;">Pague com Pix ou Cartão via Mercado Pago.</p>
-        </div>
-
-        <div style="margin-top: 30px; text-align: center; border-top: 1px dotted #cbd5e1; padding-top: 20px;">
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 5px;">Seu ID de Identificação:</p>
-            <div id="meuID" style="font-size: 1.6rem; font-weight: bold; color: #2563eb; background: #f1f5f9; padding: 10px 20px; border-radius: 8px; display: inline-block; letter-spacing: 2px;">0000</div>
-            
-            <br><br>
-            <a id="btnZapAcesso" href="#" style="color: #2563eb; font-weight: bold; text-decoration: underline; font-size: 0.9rem;">
-                Já paguei! Enviar ID pelo WhatsApp
-            </a>
-
-            <div style="margin-top: 30px; background: #f1f5f9; padding: 15px; border-radius: 12px;">
-                <label style="font-size: 0.7rem; font-weight: bold; display: block; margin-bottom: 8px; color: #475569; text-transform: uppercase;">Já tem a Chave? Ative aqui:</label>
-                <input type="number" id="inputChave" placeholder="Ex: 8542" style="text-align: center; font-size: 1.2rem; padding: 10px; border: 1px solid #cbd5e1;">
-                <button onclick="validarChave()" style="background: #1e293b; color: white; margin-top: 10px; width: 100%; border: none; padding: 12px; font-weight: bold; border-radius: 8px;">ATIVAR APLICATIVO</button>
-            </div>
-        </div>
-    </div>
-</div>
     </section>
 
     <section class="card">
-        <h2>Resumo Mensal (Salvo)</h2>
-        <div id="historico-lista"></div>
-        <button class="btn-clear" onclick="limparHistorico()">Limpar Tudo</button>
+        <h2 style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">⚙️ Ajustes de Cálculo</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="input-group">
+                <label>Taxa App (%)</label>
+                <input type="number" id="taxaApp" value="25">
+            </div>
+            <div class="input-group">
+                <label>Manut/KM (R$)</label>
+                <input type="number" id="depreKM" value="0.20" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Meta (R$)</label>
+                <input type="number" id="metaDiaria" value="150">
+            </div>
+            <div class="input-group">
+                <label>Extra/Comida</label>
+                <input type="number" id="outrosCustos" value="0">
+            </div>
+        </div>
+        <div class="input-group" style="margin-top: 10px;">
+            <label>Tipo de Veículo</label>
+            <select id="tipo" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                <option value="motorista">🚗 Carro (App)</option>
+                <option value="motoboy">🏍️ Motoboy (Entrega)</option>
+            </select>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2 style="font-size: 1rem;">📅 Histórico Salvo</h2>
+        <div id="historico-lista" style="font-size: 0.85rem; color: #64748b;"></div>
+        <button class="btn-clear" onclick="limparHistorico()" style="margin-top: 10px;">Limpar Tudo</button>
     </section>
 </main>
 
@@ -419,39 +409,320 @@
         salvarRegistro(lucroLiquido);
         carregarHistorico();
     }
+// --- VARIÁVEIS GLOBAIS ---
+let intervaloCronometro;
 
-    function salvarRegistro(lucro) {
-        let historico = JSON.parse(localStorage.getItem('historico_lucro') || '[]');
-        const novoRegistro = { data: new Date().toLocaleDateString('pt-BR'), lucro: lucro };
-        historico.push(novoRegistro);
-        localStorage.setItem('historico_lucro', JSON.stringify(historico));
-    }
+// --- 1. CONTROLE DE INTERFACE (AQUI ESTÁ A CORREÇÃO) ---
+function alternarTelas(estaTrabalhando) {
+    const fluxoInicio = document.getElementById('fluxoInicio');
+    const fluxoFim = document.getElementById('fluxoFim');
+    const statusTrabalhando = document.getElementById('statusTrabalhando');
+    const statusOffline = document.getElementById('statusOffline');
+    const resultadoSection = document.getElementById('resultadoSection');
 
-    function carregarHistorico() {
-        const hist = JSON.parse(localStorage.getItem('historico_lucro') || '[]');
-        const container = document.getElementById('historico-lista');
-        if(!container) return;
-        const totalLucro = hist.reduce((acc, curr) => acc + curr.lucro, 0);
+    if (estaTrabalhando) {
+        fluxoInicio.style.display = 'none';
+        fluxoFim.style.display = 'block';
+        statusTrabalhando.style.display = 'block';
+        statusOffline.style.display = 'none';
         
-        container.innerHTML = `
-            <div class="hist-item" style="font-weight: bold; font-size: 1rem;">
-                <span>Total Acumulado:</span>
-                <span style="color: ${totalLucro >= 0 ? 'var(--success)' : 'var(--danger)'}">
-                    R$ ${totalLucro.toFixed(2)}
-                </span>
-            </div>
-            <p style="font-size: 0.7rem; color: #999; margin-top: 5px;">Últimos registros:</p>
-        `;
-
-        hist.slice(-5).reverse().forEach(item => {
-            container.innerHTML += `
-                <div class="hist-item">
-                    <span>${item.data}</span>
-                    <span>R$ ${item.lucro.toFixed(2)}</span>
-                </div>
-            `;
-        });
+        // Recupera dados para o resumo do topo
+        const dados = JSON.parse(localStorage.getItem('turnoAtivo'));
+        if (dados) {
+            document.getElementById('txtKmInicial').innerText = dados.km;
+            const horaBr = new Date(dados.hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('txtHoraInicio').innerText = horaBr;
+        }
+    } else {
+        fluxoInicio.style.display = 'block';
+        fluxoFim.style.display = 'none';
+        statusTrabalhando.style.display = 'none';
+        statusOffline.style.display = 'block';
     }
+}
+
+// --- 2. LÓGICA DO CRONÔMETRO ---
+function atualizarCronometro() {
+    const dadosIniciais = JSON.parse(localStorage.getItem('turnoAtivo'));
+    if (!dadosIniciais) {
+        clearInterval(intervaloCronometro);
+        return;
+    }
+
+    const inicio = new Date(dadosIniciais.hora);
+    const agora = new Date();
+    const diff = agora - inicio;
+
+    const h = Math.floor(diff / (1000 * 60 * 60));
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+    const display = 
+        (h < 10 ? "0" + h : h) + ":" + 
+        (m < 10 ? "0" + m : m) + ":" + 
+        (s < 10 ? "0" + s : s);
+
+    const el = document.getElementById('cronometroDisplay');
+    if (el) el.innerText = display;
+}
+
+// --- 3. AÇÕES DO USUÁRIO ---
+function abrirDia() {
+    const kmInic = document.getElementById('kmInicial').value;
+    if (!kmInic) {
+        alert("⚠️ Por favor, informe o KM Inicial!");
+        return;
+    }
+
+    const dadosInicios = {
+        km: parseFloat(kmInic),
+        hora: new Date().toISOString(),
+        gas: parseFloat(document.getElementById('gasInicial').value) || 0
+    };
+
+    localStorage.setItem('turnoAtivo', JSON.stringify(dadosInicios));
+
+    // Inicia Relógio
+    clearInterval(intervaloCronometro);
+    intervaloCronometro = setInterval(atualizarCronometro, 1000);
+
+    alternarTelas(true);
+}
+
+function fecharDia() {
+    const dadosIniciais = JSON.parse(localStorage.getItem('turnoAtivo'));
+    if (!dadosIniciais) return;
+
+    const kmFinal = parseFloat(document.getElementById('kmFinal').value);
+    const ganhoBrutoApp = parseFloat(document.getElementById('ganhoTotal').value) || 0;
+
+    if (!kmFinal || kmFinal <= dadosIniciais.km) {
+        alert("O KM final deve ser maior que o inicial!");
+        return;
+    }
+
+    const agora = new Date();
+    const inicio = new Date(dadosIniciais.hora);
+    let diffHoras = (agora - inicio) / (1000 * 60 * 60);
+    
+    if (diffHoras < 0.016) diffHoras = 0.016; 
+
+    const kmTotal = kmFinal - dadosIniciais.km;
+    const taxaApp = (parseFloat(document.getElementById('taxaApp').value) || 0) / 100;
+    const manutKM = parseFloat(document.getElementById('depreKM').value) || 0;
+    const outros = parseFloat(document.getElementById('outrosCustos').value) || 0;
+
+    const lucro = ganhoBrutoApp - (ganhoBrutoApp * taxaApp) - (dadosIniciais.gas || 0) - (kmTotal * manutKM) - outros;
+
+    const ganhoPorHora = lucro / diffHoras;
+    const ganhoPorKm = kmTotal > 0 ? (lucro / kmTotal) : 0;
+
+    // 1. Exibir na tela (Dopamina)
+    exibirResultados(lucro, ganhoPorHora, ganhoPorKm, diffHoras, kmTotal);
+
+    // --- A LINHA QUE FALTAVA ESTÁ AQUI EMBAIXO ---
+    // 2. Salvar no banco de dados do navegador
+    salvarNoHistorico(lucro, kmTotal, diffHoras);
+    // --------------------------------------------
+
+    // 3. Finalização
+    clearInterval(intervaloCronometro);
+    localStorage.removeItem('turnoAtivo');
+    
+    // 4. Voltar para a tela inicial
+    if (typeof alternarTelas === "function") {
+        alternarTelas(false);
+    }
+
+    console.log("Turno finalizado e salvo no histórico!");
+}
+    function salvarNoHistorico(lucro, km, tempo) {
+    // Busca o que já existe ou cria uma lista vazia
+    let historico = JSON.parse(localStorage.getItem('historico_jornadas')) || [];
+    
+    // Cria o objeto com a data atual
+    const novaJornada = {
+        data: new Date().toLocaleDateString('pt-BR'),
+        lucro: lucro,
+        km: km,
+        tempo: tempo
+    };
+
+    // Adiciona ao início da lista (unshift)
+    historico.unshift(novaJornada);
+
+    // Guarda de volta no navegador
+    localStorage.setItem('historico_jornadas', JSON.stringify(historico));
+
+    // Atualiza a visualização na tela
+    carregarHistorico();
+}
+    
+    function carregarHistorico() {
+    const container = document.getElementById('historico-lista');
+    if (!container) return;
+
+    const historico = JSON.parse(localStorage.getItem('historico_jornadas')) || [];
+    
+    if (historico.length === 0) {
+        container.innerHTML = '<p style="color: #94a3b8; font-size: 0.8rem; text-align: center;">Nenhum registro encontrado.</p>';
+        return;
+    }
+
+    container.innerHTML = historico.map(item => `
+        <div style="border-bottom: 1px solid #e2e8f0; padding: 10px 0; display: flex; justify-content: space-between;">
+            <div>
+                <small style="color: #64748b;">${item.data}</small><br>
+                <strong>${item.lucro.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</strong>
+            </div>
+            <div style="text-align: right; font-size: 0.8rem;">
+                ${item.km.toFixed(1)} km <br>
+                ${Math.floor(item.tempo)}h ${Math.round((item.tempo % 1) * 60)}m
+            </div>
+        </div>
+    `).join('');
+}
+
+function exibirResultados(lucro, gHora, gKm, tempo, kmTotal) {
+    // Mostra a seção de resultados
+    document.getElementById('resultadoSection').style.display = 'block';
+
+    // Formata o Lucro, Ganho/Hora e Ganho/KM
+    document.getElementById('resLucro').innerText = lucro.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    document.getElementById('resHora').innerText = gHora.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    document.getElementById('resKM').innerText = gKm.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    
+    // Formata a Distância
+    document.getElementById('resKmTotal').innerText = kmTotal.toFixed(1) + " km";
+
+    // --- FORMATAÇÃO DO TEMPO ONLINE (AQUI ESTAVA O PROBLEMA) ---
+    const horasInteiras = Math.floor(tempo);
+    const minutosRestantes = Math.round((tempo - horasInteiras) * 60);
+    
+    // Exibe no ID resTempo (certifique-se que o ID no HTML é este)
+    document.getElementById('resTempo').innerText = horasInteiras + "h " + minutosRestantes + "m";
+
+    // Barra de Meta
+    const metaDiaria = parseFloat(document.getElementById('metaDiaria').value) || 1;
+    const pct = Math.min((lucro / metaDiaria) * 100, 100);
+    
+    const metaBar = document.getElementById('metaBar');
+    if (metaBar) metaBar.style.width = pct + "%";
+    
+    const metaText = document.getElementById('metaText');
+    if (metaText) metaText.innerText = Math.floor(pct) + "% da meta batida";
+
+    // Scroll suave para os resultados para gerar dopamina
+    window.scrollTo({ top: document.getElementById('resultadoSection').offsetTop, behavior: 'smooth' });
+}
+
+function cancelarJornada() {
+    if (confirm("Deseja cancelar o turno atual? Dados não serão salvos.")) {
+        clearInterval(intervaloCronometro);
+        localStorage.removeItem('turnoAtivo');
+        alternarTelas(false);
+    }
+}
+
+// --- 4. INICIALIZAÇÃO ---
+window.onload = function() {
+    const salvo = localStorage.getItem('turnoAtivo');
+    if (salvo) {
+        alternarTelas(true);
+        atualizarCronometro();
+        intervaloCronometro = setInterval(atualizarCronometro, 1000);
+    } else {
+        alternarTelas(false);
+    }
+};
+
+function exibirResultados(lucro, gHora, gKm, tempo, kmTotal) {
+    const section = document.getElementById('resultadoSection');
+    if (section) section.style.display = 'block';
+
+    // Função auxiliar para evitar o erro de 'null'
+    const setTexto = (id, valor) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = valor;
+    };
+
+    setTexto('resLucro', lucro.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
+    setTexto('resHora', gHora.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
+    setTexto('resKM', gKm.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
+    setTexto('resKmTotal', kmTotal.toFixed(1) + " km");
+
+    // Formatação do Tempo
+    const h = Math.floor(tempo);
+    const m = Math.round((tempo - h) * 60);
+    setTexto('resTempo', h + "h " + m + "m");
+
+    // Barra de Meta com Verificação
+    const metaDiaria = parseFloat(document.getElementById('metaDiaria')?.value) || 1;
+    const pct = Math.min((lucro / metaDiaria) * 100, 100);
+    
+    const metaBar = document.getElementById('metaBar');
+    if (metaBar) metaBar.style.width = pct + "%";
+
+    const metaText = document.getElementById('metaText');
+    if (metaText) metaText.innerText = Math.floor(pct) + "% da meta batida";
+
+    const metaPercent = document.getElementById('metaPercent');
+    if (metaPercent) metaPercent.innerText = Math.floor(pct) + "%";
+
+    // Scroll Suave
+    if (section) window.scrollTo({ top: section.offsetTop, behavior: 'smooth' });
+}
+
+function executarCalculoFinal(bruto, km, horas, combustivel) {
+    // Busca configurações das taxas
+    const taxaPerc = parseFloat(document.getElementById('taxaApp').value) || 0;
+    const depreKM = parseFloat(document.getElementById('depreKM').value) || 0;
+    const outros = parseFloat(document.getElementById('outrosCustos').value) || 0;
+    const meta = parseFloat(document.getElementById('metaDiaria').value) || 1;
+
+    // Lógica Financeira
+    const valorTaxaApp = bruto * (taxaPerc / 100);
+    const custoManutencao = km * depreKM;
+    const custosTotais = valorTaxaApp + combustivel + outros + custoManutencao;
+    const lucroLiquido = bruto - custosTotais;
+
+    // CÁLCULO DE GANHO POR HORA (CORRIGIDO)
+    const ganhoHora = lucroLiquido / horas;
+    const ganhoKM = lucroLiquido / (km > 0 ? km : 1);
+
+    // EXIBIÇÃO NA TELA
+    document.getElementById('resultadoSection').style.display = 'block';
+    document.getElementById('resLucro').innerText = `R$ ${lucroLiquido.toFixed(2)}`;
+    document.getElementById('resHora').innerText = `R$ ${ganhoHora.toFixed(2)}`;
+    document.getElementById('resKM').innerText = `R$ ${ganhoKM.toFixed(2)}`;
+    document.getElementById('resTaxa').innerText = `R$ ${valorTaxaApp.toFixed(2)}`;
+    document.getElementById('resDepre').innerText = `R$ ${custoManutencao.toFixed(2)}`;
+
+    // Atualiza Barra de Meta
+    const porcMeta = Math.min((lucroLiquido / meta) * 100, 100);
+    document.getElementById('metaBar').style.width = (porcMeta > 0 ? porcMeta : 0) + '%';
+    document.getElementById('metaText').innerText = `${porcMeta.toFixed(0)}% da meta batida`;
+
+    // Atualiza Alertas Visuais
+    const statusCard = document.getElementById('statusCard');
+    const valeAPena = document.getElementById('valeAPena');
+    
+    if (lucroLiquido <= 0) {
+        statusCard.className = 'res-card highlight-card alert-prejuizo';
+        document.getElementById('labelLucro').innerText = 'PREJUÍZO!';
+        valeAPena.innerText = "❌ Hoje você pagou para trabalhar.";
+    } else {
+        statusCard.className = 'res-card highlight-card alert-ok';
+        document.getElementById('labelLucro').innerText = 'LUCRO LÍQUIDO';
+        valeAPena.innerText = ganhoHora < SALARIO_MIN_HORA ? "⚠️ Ganho/Hora muito baixo!" : "✅ Valeu a pena!";
+    }
+
+    document.getElementById('fraseDinamica').innerText = 
+        `Em ${horas.toFixed(1)}h rodadas, seu lucro real foi de R$ ${lucroLiquido.toFixed(2)}.`;
+
+    salvarRegistro(lucroLiquido);
+    carregarHistorico();
+}
 
     function limparHistorico() {
         if(confirm("Deseja apagar todo o histórico?")) {
@@ -465,6 +736,11 @@
         gerenciarSeguranca();
         carregarHistorico();
     };
+
+    window.onload = function() {
+    verificarStatusAoCarregar();
+    carregarHistorico(); // Adicione esta linha aqui!
+};
 </script>
 
 <script>
